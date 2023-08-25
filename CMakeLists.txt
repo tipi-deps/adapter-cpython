@@ -39,6 +39,8 @@ hunter_autotools_project("cpython"
     PACKAGE_CONFIGURATION_TYPES
       "${CMAKE_BUILD_TYPE}"
     EXTRA_FLAGS 
+      --with-pkg-config=no
+      #--enable-optimizations # disabled because LLVM Profile Error: Failed to write file "code-7271.profclangr": No such file or directory
     BOOTSTRAP
       ""
 )
@@ -85,14 +87,14 @@ configure_package_config_file(
 
 
 # Targets:
-install(
-    TARGETS libpq
-    EXPORT "${targets_export_name}"
-    LIBRARY DESTINATION "lib"
-    ARCHIVE DESTINATION "lib"
-    RUNTIME DESTINATION "bin"
-    INCLUDES DESTINATION "${include_install_dir}"
-)
+#install(
+#    TARGETS libpq
+#    EXPORT "${targets_export_name}"
+#    LIBRARY DESTINATION "lib"
+#    ARCHIVE DESTINATION "lib"
+#    RUNTIME DESTINATION "bin"
+#    INCLUDES DESTINATION "${include_install_dir}"
+#)
 
 # Config
 #   * <prefix>/lib/cmake/cpython/cpythonConfig.cmake
@@ -102,8 +104,8 @@ install(
     FILES "${project_config}" "${version_config}"
     DESTINATION "${config_install_dir}"
 )
-install(
-    EXPORT "${targets_export_name}"
-    NAMESPACE "${namespace}"
-    DESTINATION "${config_install_dir}"
-)
+#install(
+#    EXPORT "${targets_export_name}"
+#    NAMESPACE "${namespace}"
+#    DESTINATION "${config_install_dir}"
+#)
