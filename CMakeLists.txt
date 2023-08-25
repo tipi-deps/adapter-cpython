@@ -17,6 +17,8 @@ include(hunter_cmake_args)
 
 ProcessorCount(Ncore)
 
+find_package(OpenSSL REQUIRED)
+
 hunter_autotools_project("cpython"
     HUNTER_SELF
       "${CMAKE_CURRENT_LIST_DIR}"
@@ -39,6 +41,7 @@ hunter_autotools_project("cpython"
     PACKAGE_CONFIGURATION_TYPES
       "${CMAKE_BUILD_TYPE}"
     EXTRA_FLAGS 
+      --with-openssl=${OPENSSL_INCLUDE_DIR}/.. # openssl root dir is one level up the includes
       --with-pkg-config=no
       #--enable-optimizations # disabled because LLVM Profile Error: Failed to write file "code-7271.profclangr": No such file or directory
     BOOTSTRAP
