@@ -23,9 +23,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          owner: tipi-build 
-          repo: elfshaker
-          commitish: main
+          owner: tipi-deps
+          repo: adapter-cpython 
+          commitish: master
           tag_name: ${{ env.version_in_development }}
           release_name: ${{ env.version_in_development }} ${{ github.sha }}
           draft: true
