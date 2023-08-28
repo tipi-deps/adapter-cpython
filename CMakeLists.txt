@@ -90,6 +90,7 @@ configure_package_config_file(
 
 
 # Targets:
+
 #install(
 #    TARGETS libpq
 #    EXPORT "${targets_export_name}"
@@ -98,6 +99,12 @@ configure_package_config_file(
 #    RUNTIME DESTINATION "bin"
 #    INCLUDES DESTINATION "${include_install_dir}"
 #)
+
+# Resources
+install(
+    FILES "${CMAKE_CURRENT_LIST_DIR}/install_certificates.py"
+    DESTINATION "bin"
+)
 
 # Config
 #   * <prefix>/lib/cmake/cpython/cpythonConfig.cmake

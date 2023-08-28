@@ -56,8 +56,8 @@ jobs:
       - name: package python for distro
         run: |
           cd build/clang-cxx17/
+          cd bin/ && tipi run make install && cd ..
           cp -Rp ./installed python-${{ env.version_in_development }}-macos-x86_64
-          cp install_certificates.py python-${{ env.version_in_development }}-macos-x86_64/
           zip python-${{ env.version_in_development }}-macos-x86_64.zip -r python-v3.11.5-macos-x86_64
       - name: Release python
         id: upload-tipi-python-package 
