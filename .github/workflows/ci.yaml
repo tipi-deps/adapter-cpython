@@ -1,0 +1,54 @@
+env:
+  version_in_development: v3.11.5
+
+jobs:
+  draft-release:
+    name: Draft Release if develop branch
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.draft_release.outputs.upload_url }}  
+      release_id: ${{ steps.draft_release.outputs.id }}  
+    steps:
+      - name: Create Release
+        id: draft_release
+        if: github.ref == 'refs/heads/develop' || github.head_ref == 'feature/unpack-cmd'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          owner: tipi-build 
+          repo: elfshaker
+          commitish: main
+          tag_name: ${{ env.version_in_development }}
+          release_name: ${{ env.version_in_development }} ${{ github.sha }}
+          draft: true
+          prerelease: true 
+
+
+  build-macos:
+    name: build-macos
+    runs-on: macos-latest
+    needs: draft-release
+    steps:
+      - uses: actions/checkout@v2
+      - name: install tipi 
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tipi-build/cli/master/install/install_for_macos_linux.sh)"
+      - name: build python
+        run: |
+          tipi . -t clang-cxx17 -v
+      - name: package python for distro
+        run: |
+          cd build/clang-cxx17/
+          cp -Rp ./installed python-${{ version_in_development }}-macos-x86_64
+          zip python-${{ version_in_development }}-macos-x86_64.zip -r python-v3.11.5-macos-x86_64
+      - name: Release python
+        id: upload-tipi-python-package 
+        uses: actions/upload-release-asset@v1
+        env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{needs.draft-release.outputs.upload_url}}
+          asset_path: build/clang-cxx17/python-v3.11.5-macos-x86_64.zip
+          asset_name: python-v3.11.5-macos-x86_64.zip
+          asset_content_type: application/zip
