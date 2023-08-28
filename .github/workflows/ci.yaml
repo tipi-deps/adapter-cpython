@@ -1,9 +1,16 @@
+name: cpython-build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 env:
   version_in_development: v3.11.5
 
 jobs:
   draft-release:
-    name: Draft Release if develop branch
+    name: Draft Release if master branch
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.draft_release.outputs.upload_url }}  
@@ -11,7 +18,7 @@ jobs:
     steps:
       - name: Create Release
         id: draft_release
-        if: github.ref == 'refs/heads/develop' || github.head_ref == 'feature/unpack-cmd'
+        if: github.ref == 'refs/heads/master' 
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
