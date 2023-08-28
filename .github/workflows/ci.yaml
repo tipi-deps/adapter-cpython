@@ -43,6 +43,7 @@ jobs:
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tipi-build/cli/master/install/install_for_macos_linux.sh)"
       - name: build python
         run: |
+          export TIPI_DISTRO_MODE=all
           tipi . -t clang-cxx17 -v
       - name: package python for distro
         run: |
