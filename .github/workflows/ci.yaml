@@ -47,8 +47,8 @@ jobs:
       - name: package python for distro
         run: |
           cd build/clang-cxx17/
-          cp -Rp ./installed python-${{ version_in_development }}-macos-x86_64
-          zip python-${{ version_in_development }}-macos-x86_64.zip -r python-v3.11.5-macos-x86_64
+          cp -Rp ./installed python-${{ env.version_in_development }}-macos-x86_64
+          zip python-${{ env.version_in_development }}-macos-x86_64.zip -r python-v3.11.5-macos-x86_64
       - name: Release python
         id: upload-tipi-python-package 
         uses: actions/upload-release-asset@v1
