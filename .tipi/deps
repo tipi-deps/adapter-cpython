@@ -1,4 +1,4 @@
 {
   "u" : true,
-  "tipi-deps/middleware_openssl" : { "u": true, "@" : ":4a5e608bcd1eedb874e3fdd58a0c53dd52420114" }
+  "tipi-deps/middleware_openssl" : { "u": true, "@" : ":367882cc2d43d59e13f5ec06c75757c438da1b8c" }
 }
