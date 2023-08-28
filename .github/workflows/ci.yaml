@@ -7,6 +7,9 @@ on:
   pull_request:
 env:
   version_in_development: v3.11.5
+  TIPI_ACCESS_TOKEN: ${{ secrets.TIPI_CI_USER_0001_TIPI_ACCESS_TOKEN }}
+  TIPI_REFRESH_TOKEN: ${{ secrets.TIPI_CI_USER_0001_TIPI_REFRESH_TOKEN }}
+  TIPI_VAULT_PASSPHRASE: ${{ secrets.TIPI_CI_USER_0001_TIPI_VAULT_PASSPHRASE }}
 
 concurrency: 
   group: ${{ github.ref }}
@@ -48,6 +51,7 @@ jobs:
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tipi-build/cli/master/install/install_for_macos_linux.sh)"
       - name: build python
         run: |
+          tipi connect -v
           tipi . -t clang-cxx17 -v
       - name: package python for distro
         run: |
