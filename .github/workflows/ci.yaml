@@ -60,6 +60,7 @@ jobs:
           zip python-${{ env.version_in_development }}-macos-x86_64.zip -r python-v3.11.5-macos-x86_64
       - name: Release python
         id: upload-tipi-python-package 
+        if: ${{needs.draft-release.outputs.upload_url}}
         uses: actions/upload-release-asset@v1
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
