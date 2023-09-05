@@ -1,0 +1,72 @@
+name: cpython-build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+env:
+  version_in_development: v3.11.5
+  TIPI_ACCESS_TOKEN: ${{ secrets.TIPI_CI_USER_0001_TIPI_ACCESS_TOKEN }}
+  TIPI_REFRESH_TOKEN: ${{ secrets.TIPI_CI_USER_0001_TIPI_REFRESH_TOKEN }}
+  TIPI_VAULT_PASSPHRASE: ${{ secrets.TIPI_CI_USER_0001_TIPI_VAULT_PASSPHRASE }}
+
+concurrency: 
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  draft-release:
+    name: Draft Release if master branch
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.draft_release.outputs.upload_url }}  
+      release_id: ${{ steps.draft_release.outputs.id }}  
+    steps:
+      - name: Create Release
+        id: draft_release
+        if: github.ref == 'refs/heads/master' 
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          owner: tipi-deps
+          repo: adapter-cpython 
+          commitish: master
+          tag_name: ${{ env.version_in_development }}
+          release_name: ${{ env.version_in_development }} ${{ github.sha }}
+          draft: true
+          prerelease: true 
+
+
+  build-macos:
+    name: build-macos
+    runs-on: macos-latest
+    needs: draft-release
+    steps:
+      - uses: actions/checkout@v2
+      - name: install tipi 
+        run: |
+          export TIPI_DISTRO_MODE=all
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/tipi-build/cli/master/install/install_for_macos_linux.sh)"
+      - name: build python
+        run: |
+          tipi connect -v
+          tipi . -t clang-cxx17 -v
+      - name: package python for distro
+        run: |
+          cd build/clang-cxx17/
+          cd bin/ && tipi run make install && cd ..
+          cp -Rp ./installed python-${{ env.version_in_development }}-macos-x86_64
+          zip python-${{ env.version_in_development }}-macos-x86_64.zip -r python-v3.11.5-macos-x86_64
+      - name: Release python
+        id: upload-tipi-python-package 
+        if: ${{needs.draft-release.outputs.upload_url}}
+        uses: actions/upload-release-asset@v1
+        env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{needs.draft-release.outputs.upload_url}}
+          asset_path: build/clang-cxx17/python-v3.11.5-macos-x86_64.zip
+          asset_name: python-v3.11.5-macos-x86_64.zip
+          asset_content_type: application/zip
